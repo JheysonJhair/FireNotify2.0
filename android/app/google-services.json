@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1017462557443",
+    "project_id": "satelitealarm-175a9",
+    "storage_bucket": "satelitealarm-175a9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017462557443:android:c698b4632eaf82e1bef736",
+        "android_client_info": {
+          "package_name": "com.firenotify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXO2UsB8OFPh_LKHRRvu58sRXI0JhpT34"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017462557443:android:5af8c2bfaac293abbef736",
+        "android_client_info": {
+          "package_name": "com.jhair.notify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXO2UsB8OFPh_LKHRRvu58sRXI0JhpT34"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
