@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,47 +6,50 @@ import {
   StyleSheet,
   Image,
   ScrollView,
-} from "react-native";
-import Info from "../../components/information/Info";
-import Notification from "../../components/information/Notification";
-import { fetchData } from "../../api/apiFire";
-import LoadingIndicator from "../../components/modal/LoadingIndicator";
+} from 'react-native';
+import Info from '../../components/information/Info';
+import Notification from '../../components/information/Notification';
+import {fetchData, fetchData2} from '../../api/apiFire';
+import LoadingIndicator from '../../components/modal/LoadingIndicator';
 
 function Notify() {
-  const [selectedTab, setSelectedTab] = useState("Todos");
+  const [selectedTab, setSelectedTab] = useState('Todos');
   const [notifications, setNotifications] = useState([]);
+  const [notificationsRecent, setNotificationsRecent] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const getData = async () => {
+    const interval = setInterval(async () => {
       try {
         const data = await fetchData();
+        const data2 = await fetchData2();
         setNotifications(data);
+        setNotificationsRecent(data2);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
         setIsLoading(false);
       }
-    };
-    getData();
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  
-  const getFireImage = (temperature) => {
+  const getFireImage = temperature => {
     if (temperature > 60) {
-      return require("../../assets/fire/2.jpg");
-    } else if (temperature > 40) {
-      return require("../../assets/fire/3.jpg");
+      return require('../../assets/fire/3.jpg');
     } else if (temperature > 30) {
-      return require("../../assets/fire/1.jpg");
+      return require('../../assets/fire/2.jpg');
+    } else if (temperature > 0) {
+      return require('../../assets/fire/1.jpg');
     } else {
-      return require("../../assets/logo.png");
+      return require('../../assets/logo.png');
     }
   };
 
-  const formatDate = (dateString) => {
-    const dateParts = dateString.split("T");
+  const formatDate = dateString => {
+    const dateParts = dateString.split('T');
     return dateParts[0];
   };
 
@@ -56,12 +59,12 @@ function Notify() {
         <View style={styles.logoAndInfoContainer}>
           <View style={styles.logoContainer}>
             <Image
-              source={require("../../assets/logo.png")}
+              source={require('../../assets/logo.png')}
               style={styles.logo}
             />
           </View>
           <View style={styles.infoContainerImage}>
-            <Info title="ALERTA INCENDIOS" ubicacion="PERÚ / APURíMAC" />
+            <Info title="ALERTA INCENDIOS" ubicacion="APURíMAC / PERÚ" />
           </View>
         </View>
         <Text style={styles.title}>Notificaciones</Text>
@@ -69,19 +72,17 @@ function Notify() {
           <TouchableOpacity
             style={[
               styles.tabButton,
-              selectedTab === "Todos" && styles.selectedTab,
+              selectedTab === 'Todos' && styles.selectedTab,
             ]}
-            onPress={() => setSelectedTab("Todos")}
-          >
+            onPress={() => setSelectedTab('Todos')}>
             <Text style={styles.tabText}>Todos</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.tabButton,
-              selectedTab === "Recientes" && styles.selectedTab,
+              selectedTab === 'Recientes' && styles.selectedTab,
             ]}
-            onPress={() => setSelectedTab("Recientes")}
-          >
+            onPress={() => setSelectedTab('Recientes')}>
             <Text style={styles.tabText}>Recientes</Text>
           </TouchableOpacity>
         </View>
@@ -90,21 +91,36 @@ function Notify() {
         ) : (
           <ScrollView>
             <View>
-              {selectedTab === "Todos" ? (
+              {selectedTab === 'Todos' ? (
                 notifications.map((notification, index) => (
                   <Notification
                     key={index}
                     imageSource={
                       addresses[index]?.streetViewUrl
-                        ? { uri: addresses[index].streetViewUrl }
+                        ? {uri: addresses[index].streetViewUrl}
                         : getFireImage(notification.temperature)
                     }
-                    location={notification.latitud + notification.longitud}
+                    locationLatitude={notification.latitud}
+                    locationLongitude={notification.longitud}
+                    date={formatDate(notification.date)}
+                  />
+                ))
+              ) : Array.isArray(notificationsRecent) ? (
+                notificationsRecent.map((notification, index) => (
+                  <Notification
+                    key={index}
+                    imageSource={
+                      addresses[index]?.streetViewUrl
+                        ? {uri: addresses[index].streetViewUrl}
+                        : getFireImage(notification.temperature)
+                    }
+                    locationLatitude={notification.latitud}
+                    locationLongitude={notification.longitud}
                     date={formatDate(notification.date)}
                   />
                 ))
               ) : (
-                <Notification />
+                <Text>No hay notificaciones recientes disponibles.</Text>
               )}
             </View>
           </ScrollView>
@@ -117,7 +133,7 @@ function Notify() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
   },
   content: {
     paddingTop: 18,
@@ -126,60 +142,60 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 20,
   },
   tabContainer: {
-    flexDirection: "row",
-    width: "100%",
+    flexDirection: 'row',
+    width: '100%',
     marginBottom: 10,
   },
   tabButton: {
     flex: 1,
-    alignItems: "center",
+    alignItems: 'center',
     paddingVertical: 10,
-    backgroundColor: "#EBEAEB",
+    backgroundColor: '#EBEAEB',
   },
   selectedTab: {
-    backgroundColor: "#FF9800",
+    backgroundColor: '#FF9800',
   },
   tabText: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "black",
+    fontWeight: 'bold',
+    color: 'black',
   },
   notification: {
     borderWidth: 1,
-    borderColor: "#cccccc",
+    borderColor: '#cccccc',
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
-    width: "100%",
+    width: '100%',
   },
   notificationText: {
     fontSize: 16,
   },
   logoAndInfoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 20,
     marginTop: 10,
   },
   logoContainer: {
     marginRight: 20,
-    backgroundColor: "#E4E2E3",
+    backgroundColor: '#E4E2E3',
     borderRadius: 10,
     padding: 10,
   },
   logo: {
     width: 100,
     height: 100,
-    resizeMode: "contain",
+    resizeMode: 'contain',
   },
   text00: {
     fontSize: 14,
-    fontWeight: "bold",
-    color: "#48C26C",
+    fontWeight: 'bold',
+    color: '#48C26C',
   },
 });
 

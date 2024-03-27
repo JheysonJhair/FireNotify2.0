@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   containerLogoText: {
     color: "#fff",
     fontSize: 38,
-    fontFamily: "Montserrat_800ExtraBold",
+    fontWeight: "bold",
   },
   logo: {
     width: 120,

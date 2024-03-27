@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 16,
-    fontFamily: "Montserrat_800ExtraBold",
+    fontWeight: "bold",
     marginLeft: 5,
   },
   icon: {

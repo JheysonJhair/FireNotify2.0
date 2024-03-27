@@ -57,7 +57,7 @@ const styles = {
   },
   h2: {
     fontSize: 19,
-    fontFamily: "Montserrat_800ExtraBold",
+    fontWeight: "bold",
   },
   h33: {
     fontSize: 14,
