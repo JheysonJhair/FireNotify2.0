@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,34 +9,39 @@ import {
 } from 'react-native';
 import Info from '../../components/information/Info';
 import Notification from '../../components/information/Notification';
-import {fetchData, fetchData2} from '../../api/apiFire';
+import { fetchData, fetchData2 } from '../../api/apiFire';
 import LoadingIndicator from '../../components/modal/LoadingIndicator';
 
 function Notify() {
   const [selectedTab, setSelectedTab] = useState('Todos');
   const [notifications, setNotifications] = useState([]);
-  const [notificationsRecent, setNotificationsRecent] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
+    const fetchNotifications = async () => {
       try {
-        const data = await fetchData();
-        const data2 = await fetchData2();
+        setIsLoading(true);
+        let data;
+        if (selectedTab === 'Todos') {
+          data = await fetchData();
+        } else {
+          data = await fetchData2();
+        }
         setNotifications(data);
-        setNotificationsRecent(data2);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
         setIsLoading(false);
       }
-    }, 1000);
+    };
 
-    return () => clearInterval(interval);
-  }, []);
+    const timer = setTimeout(fetchNotifications, 1000);
 
-  const getFireImage = temperature => {
+    return () => clearTimeout(timer);
+  }, [selectedTab]);
+
+  const getFireImage = (temperature) => {
     if (temperature > 60) {
       return require('../../assets/fire/3.jpg');
     } else if (temperature > 30) {
@@ -48,7 +53,7 @@ function Notify() {
     }
   };
 
-  const formatDate = dateString => {
+  const formatDate = (dateString) => {
     const dateParts = dateString.split('T');
     return dateParts[0];
   };
@@ -97,21 +102,7 @@ function Notify() {
                     key={index}
                     imageSource={
                       addresses[index]?.streetViewUrl
-                        ? {uri: addresses[index].streetViewUrl}
-                        : getFireImage(notification.temperature)
-                    }
-                    locationLatitude={notification.latitud}
-                    locationLongitude={notification.longitud}
-                    date={formatDate(notification.date)}
-                  />
-                ))
-              ) : Array.isArray(notificationsRecent) ? (
-                notificationsRecent.map((notification, index) => (
-                  <Notification
-                    key={index}
-                    imageSource={
-                      addresses[index]?.streetViewUrl
-                        ? {uri: addresses[index].streetViewUrl}
+                        ? { uri: addresses[index].streetViewUrl }
                         : getFireImage(notification.temperature)
                     }
                     locationLatitude={notification.latitud}
@@ -120,7 +111,23 @@ function Notify() {
                   />
                 ))
               ) : (
-                <Text>No hay notificaciones recientes disponibles.</Text>
+                notifications.length > 0 ? (
+                  notifications.map((notification, index) => (
+                    <Notification
+                      key={index}
+                      imageSource={
+                        addresses[index]?.streetViewUrl
+                          ? { uri: addresses[index].streetViewUrl }
+                          : getFireImage(notification.temperature)
+                      }
+                      locationLatitude={notification.latitud}
+                      locationLongitude={notification.longitud}
+                      date={formatDate(notification.date)}
+                    />
+                  ))
+                ) : (
+                  <Text>No hay notificaciones recientes disponibles.</Text>
+                )
               )}
             </View>
           </ScrollView>
