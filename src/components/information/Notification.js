@@ -6,6 +6,7 @@ const Notification = ({
   locationLatitude,
   locationLongitude,
   date,
+  hour
 }) => {
   const [address, setAddress] = useState('');
 
@@ -47,6 +48,7 @@ const Notification = ({
       </View>
       <View style={styles.dateContainer}>
         <Text style={styles.date}>{date}</Text>
+        <Text style={styles.date}>{hour}</Text>
       </View>
     </View>
   );

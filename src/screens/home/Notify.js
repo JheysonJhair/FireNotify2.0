@@ -42,22 +42,38 @@ function Notify() {
   }, [selectedTab]);
 
   const getFireImage = (temperature) => {
-    if (temperature > 60) {
-      return require('../../assets/fire/3.jpg');
-    } else if (temperature > 30) {
-      return require('../../assets/fire/2.jpg');
-    } else if (temperature > 0) {
-      return require('../../assets/fire/1.jpg');
+    let imagePath;
+  
+    if (temperature < 50) {
+      imagePath = require('../../assets/fire/1.jpg');
+
+    } else if (temperature > 50 && temperature <= 80) {
+      imagePath = require('../../assets/fire/2.jpg');
+    } else if (temperature > 80) {
+      imagePath = require('../../assets/fire/3.jpg');
     } else {
-      return require('../../assets/logo.png');
+      imagePath = require('../../assets/logo.png');
     }
+  
+    return imagePath;
   };
+  
 
   const formatDate = (dateString) => {
     const dateParts = dateString.split('T');
     return dateParts[0];
   };
-
+  const formatHour = (dateString) => {
+    const date = new Date(dateString);
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; 
+    return `${hours}:${minutes}:${seconds} ${ampm}`;
+  };
+  
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -108,6 +124,7 @@ function Notify() {
                     locationLatitude={notification.latitud}
                     locationLongitude={notification.longitud}
                     date={formatDate(notification.date)}
+                    hour={formatHour(notification.date)} 
                   />
                 ))
               ) : (
@@ -123,6 +140,7 @@ function Notify() {
                       locationLatitude={notification.latitud}
                       locationLongitude={notification.longitud}
                       date={formatDate(notification.date)}
+                      hour={formatHour(notification.date)} 
                     />
                   ))
                 ) : (

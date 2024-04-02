@@ -16,7 +16,6 @@ export default function Home() {
       const circleData = await fetchData();
       setFireLocations(locations);
       setFireCircleData(circleData);
-      console.log(fireCircleData);
     };
 
     fetchDataAndCircle();

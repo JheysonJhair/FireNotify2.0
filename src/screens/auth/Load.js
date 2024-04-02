@@ -19,7 +19,7 @@ const Load = () => {
       <View style={styles.containerLogo}>
         <Image source={require("../../assets/logo.png")} style={styles.logo} />
         <Animatable.Text animation="flipInX" style={styles.containerLogoText}>
-          NotiFire
+          FireNotify
         </Animatable.Text>
       </View>
     </View>
